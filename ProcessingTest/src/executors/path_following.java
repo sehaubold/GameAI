@@ -459,7 +459,7 @@ public class path_following  extends PApplet {
         return true;
 
     }
-    public static void dance(Character param) {
+    public static boolean dance(Character param) {
         if (danceDone) {
             Node start = param.graph.nodes.get(param.start);
             PVector check = new PVector((float) start.x, (float) start.y);
@@ -468,13 +468,13 @@ public class path_following  extends PApplet {
                 AlgorithmSet.arriveSimple(direction, param.target, param, MAX_ACCELERATION, MAX_VELOCITY, RADIUS_DECEL, RADIUS_SAT, EFFECT_RANGE);
                 AlgorithmSet.SteeringAdjust(param,  RADIUS_SAT_ROT, RADIUS_DECEL_ROT, EFFECT_RANGE_ROT, MAX_ROT);
                 AlgorithmSet.kinematicAdjust(param);
-                return;
+                return false;
             }
             danceDone = false;
             param.alive = true;  
             path_following.character.run = true;
             param.run = true;
-            return;
+            return false;
         }
         Graph graph = new Graph();
         int toAdd = 200;
@@ -507,6 +507,7 @@ public class path_following  extends PApplet {
             param.path.push(storage.pop());
         }
         param.goal = new PVector((float) reset.x, (float) reset.y);
+        return true;
     }
     public static boolean search(Character parameter) {
     PVector search = new PVector();

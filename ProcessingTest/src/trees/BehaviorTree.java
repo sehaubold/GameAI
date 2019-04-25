@@ -7,7 +7,6 @@ import enumerations.BehaviorType;
 import executors.path_following;
 import objects.Character;
 import objects.Graph;
-import objects.Graph.Node;
 import processing.core.PShape;
 import processing.core.PVector;
 
@@ -45,7 +44,6 @@ public class BehaviorTree {
         Node chase = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "chase", null, 0);
         Node wander = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "wander", null, 0);
         Node search = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "search", null, 0);
-        Node reset = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "reset", null, 0);
         Node roomChange1 = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "changerooms1", null, 0);
         Node roomChange2 = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "changerooms2", null, 0);
         Node roomChange3 = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "changerooms3", null, 0);
@@ -77,7 +75,6 @@ public class BehaviorTree {
         //dance sequence
         deadCharacterSeq.children.add(isdead);
         deadCharacterSeq.children.add(dance);
-        deadCharacterSeq.children.add(reset);
         
         //root and children assigned
         tree.root = selectorRoot;
@@ -227,11 +224,9 @@ public class BehaviorTree {
 //                return search(character);
                 return path_following.search(character);
             } else if (field.equals("dance")) {
-              return dance(character);
+              return path_following.dance(character);
               
-          } else if (field.equals("reset")) {
-            return reset(character);
-        }
+          }
             return false;
         }
 
@@ -304,53 +299,53 @@ public class BehaviorTree {
         //            path_following.stateOutput.append("\n");
                     
                 }
-        private boolean dance(Character character) {
-            if (danceDone) {
-                danceDone = false;
-                character.alive = true;  
-                path_following.character.run = true;
-                character.run = true;
-                return false;
-            }
-            Graph graph = new Graph();
-            int toAdd = 200;
-            character.path = new Stack<Graph.Node>();
-            Graph.Node loc1 = graph.new Node("", 0, 0, character.position.x - toAdd/2, character.position.y - toAdd/2, 0);
-            Graph.Node loc2 = graph.new Node("", 0, 0, character.position.x + toAdd/2, character.position.y - toAdd/2, 0);
-            Graph.Node loc3 = graph.new Node("", 0, 0, character.position.x - toAdd/2, character.position.y + toAdd/2, 0);
-            Graph.Node loc4 = graph.new Node("", 0, 0, character.position.x - toAdd/2, character.position.y + toAdd/2, 0);
-            Graph.Node loc5 = graph.new Node("", 0, 0, character.position.x + toAdd/2, character.position.y + toAdd/2, 0);
-            Graph.Node loc6 = graph.new Node("", 0, 0, character.position.x, character.position.y, 0);
-            character.path.push(loc6);
-            character.path.push(loc5);
-            character.path.push(loc4);
-            character.path.push(loc3);
-            character.path.push(loc2);
-            character.target = new PVector((float) loc1.x, (float)  loc1.y);
-            character.goal = new PVector((float) loc6.x, (float) loc6.y);
-            danceDone = true;
-            
-            
-            
-            return true;
-        }
-        private boolean reset(Character character) {
-//            monster.position = new PVector(FRAME_WIDTH/2, FRAME_HEIGHT/2);
-            character.angRot = 0;
-            character.angle = 0;
-            character.inSight = false; 
-            character.goal = new PVector((float) character.graph.nodes.get(character.start).x , (float) character.graph.nodes.get(character.start).y);
-            Stack<Graph.Node> storage = new Stack<Graph.Node>();
-            int num = character.path.size();
-            for (int i = 0; i < num; i++) {
-                storage.push(character.path.pop());
-            }
-            character.path.push(character.graph.nodes.get(character.start));
-            for (int i = 0; i < num; i++) {
-                character.path.push(storage.pop());
-            }
-            return true;
-        }
+//        private boolean dance(Character character) {
+//            if (danceDone) {
+//                danceDone = false;
+//                character.alive = true;  
+//                path_following.character.run = true;
+//                character.run = true;
+//                return false;
+//            }
+//            Graph graph = new Graph();
+//            int toAdd = 200;
+//            character.path = new Stack<Graph.Node>();
+//            Graph.Node loc1 = graph.new Node("", 0, 0, character.position.x - toAdd/2, character.position.y - toAdd/2, 0);
+//            Graph.Node loc2 = graph.new Node("", 0, 0, character.position.x + toAdd/2, character.position.y - toAdd/2, 0);
+//            Graph.Node loc3 = graph.new Node("", 0, 0, character.position.x - toAdd/2, character.position.y + toAdd/2, 0);
+//            Graph.Node loc4 = graph.new Node("", 0, 0, character.position.x - toAdd/2, character.position.y + toAdd/2, 0);
+//            Graph.Node loc5 = graph.new Node("", 0, 0, character.position.x + toAdd/2, character.position.y + toAdd/2, 0);
+//            Graph.Node loc6 = graph.new Node("", 0, 0, character.position.x, character.position.y, 0);
+//            character.path.push(loc6);
+//            character.path.push(loc5);
+//            character.path.push(loc4);
+//            character.path.push(loc3);
+//            character.path.push(loc2);
+//            character.target = new PVector((float) loc1.x, (float)  loc1.y);
+//            character.goal = new PVector((float) loc6.x, (float) loc6.y);
+//            danceDone = true;
+//            
+//            
+//            
+//            return true;
+//        }
+//        private boolean reset(Character character) {
+////            monster.position = new PVector(FRAME_WIDTH/2, FRAME_HEIGHT/2);
+//            character.angRot = 0;
+//            character.angle = 0;
+//            character.inSight = false; 
+//            character.goal = new PVector((float) character.graph.nodes.get(character.start).x , (float) character.graph.nodes.get(character.start).y);
+//            Stack<Graph.Node> storage = new Stack<Graph.Node>();
+//            int num = character.path.size();
+//            for (int i = 0; i < num; i++) {
+//                storage.push(character.path.pop());
+//            }
+//            character.path.push(character.graph.nodes.get(character.start));
+//            for (int i = 0; i < num; i++) {
+//                character.path.push(storage.pop());
+//            }
+//            return true;
+//        }
 //        private boolean wander(Character parameter) {
 //            float dist = path_following.TILE_SIZE * 2;
 //            float pointsx[] = new float[] {parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x};

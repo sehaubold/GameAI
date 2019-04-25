@@ -6,7 +6,6 @@ import algorithms.AStarAlg;
 import algorithms.AlgorithmSet;
 import executors.path_following;
 import objects.Character;
-import objects.Graph;
 import objects.Graph.Node;
 
 public class MinMaxTree {
