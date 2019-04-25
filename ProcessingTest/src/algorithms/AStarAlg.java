@@ -3,8 +3,11 @@ package algorithms;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.Stack;
 
+import io.GraphReader;
 import objects.Graph;
 import objects.Graph.Edge;
 import objects.Graph.Node;
@@ -16,114 +19,112 @@ import objects.Graph.Node;
  */
 public class AStarAlg {
 
+    private static boolean printDetails;
+    private static boolean recordData;
+    private static boolean manhattan;
 
 
-//    private static boolean printDetails;
-//    private static boolean recordData;
-//    private static boolean manhattan;
-//
-//
-//    /**
-//     * @param args
-//     */
-//    public static void main(String[] args) {
-//        boolean largGraph = false;
-//        boolean autoSelect = false;
-//        String id = "";
-//        String id2 = "";
-//        System.out.println("Use Large Graph?");
-//        Scanner in = new Scanner(System.in);
-//        String input = in.nextLine();
-//        if (input.contains("Y") || input.contains("y")) {
-//            largGraph = true;
-//        } else {
-//            largGraph = false;
-//        }
-//        System.out.println("Manhattan, or Straight Line?");
-//        input = in.nextLine();
-//        if (input.contains("M") || input.contains("m")) {
-//            manhattan = true;
-//        } else {
-//            manhattan = false;
-//        }
-//        System.out.println("Auto Select Start and Target?");
-//        input = in.nextLine();
-//        if (input.contains("y") || input.contains("Y")) {
-//            autoSelect = true;
-//        } else {
-//            autoSelect = false;
-//            System.out.println("Select Start:");
-//            id2 = in.nextLine();
-//            System.out.println("Select Target:");
-//            id = in.nextLine();
-//        }
-//        System.out.println("Output data to console?");
-//        input = in.nextLine();
-//        if (input.contains("y") || input.contains("Y")) {
-//            printDetails = true;
-//        } else {
-//            printDetails = false;
-//        }
-//        System.out.println("Record Data");
-//        input = in.nextLine();
-//        if (input.contains("y") || input.contains("Y")) {
-//            recordData = true;
-//        } else {
-//            recordData = false;
-//        }
-//        in.close();
-//        long startTime = System.nanoTime();
-//        Graph worker;
-//        if (largGraph) {
-//            worker = GraphReader.GraphRead("src\\executors\\graphTwoEdges.txt", "src\\executors\\graphTwoNodes.txt");
-//        } else {
-//            worker = GraphReader.GraphRead("src\\executors\\graph1.txt", "src\\executors\\NodeNames.txt");
-//        }
-//        if (autoSelect) {
-//            Random targetSelect = new Random();
-//            worker.setTarget(targetSelect.nextInt(worker.nodes.size()));
-//            worker.setStart(targetSelect.nextInt(worker.nodes.size()));
-//        } else {
-//            worker.setTarget(worker.getNode(id).index);
-//            worker.setStart(worker.getNode(id2).index);
-//        }
-//        if (manhattan) {
-//            worker.manDist = true;
-//        }
-//        if (printDetails) {
-//            worker.printDistances = true;
-//            worker.printPath = true;
-//        } else {
-//            worker.printDistances = false;
-//            worker.printPath = false;
-//        }
-//        worker.COORDINATE_CONVERSION_FACTOR = 100.0;
-//        String out = "";
-//        if (worker != null) {
-//            for (int i = 0; i < worker.nodes.size(); i++) {
-//                out += worker.nodes.get(i).toString() + "\n";
-//            }
-//            out += "Start: " + worker.getStart().identifier + " Index:" + worker.getStart().index + "\n";
-//            out += "Target: " + worker.getTarget().identifier + " Index:" + worker.getTarget().index + "\n";
-//        }
-//        aStar(worker);
-//        String store = "Free Memory: " + Runtime.getRuntime().freeMemory();
-//        long endTime = System.nanoTime();
-//        long runtime = endTime - startTime;
-//        store += "\nRun time: " + runtime;
-//        
-//        if (recordData) {
-//            String details = "Distance: " + worker.nodes.get(worker.getTarget().index).fweight + "\n";
-//            details += "Path: " + worker.getTarget().printPath() + "\n";
-//            details += "Predicted: " + worker.getStart().h_val + " Actual: " + worker.getTarget().g_val + "\n";
-//            details += store;
-//            GraphReader.GraphWrite("src\\executors\\output.txt", out);
-//            GraphReader.DataWrite("src\\executors\\AStarOutput.txt", details);
-//        }
-//        if (printDetails) {
-//            System.out.println(store);
-//        }
-//    }
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        boolean largGraph = false;
+        boolean autoSelect = false;
+        String id = "";
+        String id2 = "";
+        System.out.println("Use Large Graph?");
+        Scanner in = new Scanner(System.in);
+        String input = in.nextLine();
+        if (input.contains("Y") || input.contains("y")) {
+            largGraph = true;
+        } else {
+            largGraph = false;
+        }
+        System.out.println("Manhattan, or Straight Line?");
+        input = in.nextLine();
+        if (input.contains("M") || input.contains("m")) {
+            manhattan = true;
+        } else {
+            manhattan = false;
+        }
+        System.out.println("Auto Select Start and Target?");
+        input = in.nextLine();
+        if (input.contains("y") || input.contains("Y")) {
+            autoSelect = true;
+        } else {
+            autoSelect = false;
+            System.out.println("Select Start:");
+            id2 = in.nextLine();
+            System.out.println("Select Target:");
+            id = in.nextLine();
+        }
+        System.out.println("Output data to console?");
+        input = in.nextLine();
+        if (input.contains("y") || input.contains("Y")) {
+            printDetails = true;
+        } else {
+            printDetails = false;
+        }
+        System.out.println("Record Data");
+        input = in.nextLine();
+        if (input.contains("y") || input.contains("Y")) {
+            recordData = true;
+        } else {
+            recordData = false;
+        }
+        in.close();
+        long startTime = System.nanoTime();
+        Graph worker;
+        if (largGraph) {
+            worker = GraphReader.GraphRead("src\\executors\\graphTwoEdges.txt", "src\\executors\\graphTwoNodes.txt");
+        } else {
+            worker = GraphReader.GraphRead("src\\executors\\graph1.txt", "src\\executors\\NodeNames.txt");
+        }
+        if (autoSelect) {
+            Random targetSelect = new Random();
+            worker.setTarget(targetSelect.nextInt(worker.nodes.size()));
+            worker.setStart(targetSelect.nextInt(worker.nodes.size()));
+        } else {
+            worker.setTarget(worker.getNode(id).index);
+            worker.setStart(worker.getNode(id2).index);
+        }
+        if (manhattan) {
+            worker.manDist = true;
+        }
+        if (printDetails) {
+            worker.printDistances = true;
+            worker.printPath = true;
+        } else {
+            worker.printDistances = false;
+            worker.printPath = false;
+        }
+        worker.COORDINATE_CONVERSION_FACTOR = 100.0;
+        String out = "";
+        if (worker != null) {
+            for (int i = 0; i < worker.nodes.size(); i++) {
+                out += worker.nodes.get(i).toString() + "\n";
+            }
+            out += "Start: " + worker.getStart().identifier + " Index:" + worker.getStart().index + "\n";
+            out += "Target: " + worker.getTarget().identifier + " Index:" + worker.getTarget().index + "\n";
+        }
+        aStar(worker);
+        String store = "Free Memory: " + Runtime.getRuntime().freeMemory();
+        long endTime = System.nanoTime();
+        long runtime = endTime - startTime;
+        store += "\nRun time: " + runtime;
+        
+        if (recordData) {
+            String details = "Distance: " + worker.nodes.get(worker.getTarget().index).fweight + "\n";
+            details += "Path: " + worker.getTarget().printPath() + "\n";
+            details += "Predicted: " + worker.getStart().h_val + " Actual: " + worker.getTarget().g_val + "\n";
+            details += store;
+            GraphReader.GraphWrite("src\\executors\\output.txt", out);
+            GraphReader.DataWrite("src\\executors\\AStarOutput.txt", details);
+        }
+        if (printDetails) {
+            System.out.println(store);
+        }
+    }
 
 
     /**
