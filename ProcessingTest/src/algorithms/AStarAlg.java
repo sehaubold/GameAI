@@ -76,9 +76,9 @@ public class AStarAlg {
         long startTime = System.nanoTime();
         Graph worker;
         if (largGraph) {
-            worker = GraphReader.GraphRead("src\\executors\\graphTwoEdges.txt", "src\\executors\\graphTwoNodes.txt");
+            worker = GraphReader.GraphRead("src\\necessarytxt\\graphTwoEdges.txt", "src\\necessarytxt\\graphTwoNodes.txt");
         } else {
-            worker = GraphReader.GraphRead("src\\executors\\graph1.txt", "src\\executors\\NodeNames.txt");
+            worker = GraphReader.GraphRead("src\\necessarytxt\\graph1.txt", "src\\necessarytxt\\NodeNames.txt");
         }
         if (autoSelect) {
             Random targetSelect = new Random();
@@ -118,8 +118,8 @@ public class AStarAlg {
             details += "Path: " + worker.getTarget().printPath() + "\n";
             details += "Predicted: " + worker.getStart().h_val + " Actual: " + worker.getTarget().g_val + "\n";
             details += store;
-            GraphReader.GraphWrite("src\\executors\\output.txt", out);
-            GraphReader.DataWrite("src\\executors\\AStarOutput.txt", details);
+            GraphReader.GraphWrite("src\\necessarytxt\\details.txt", out);
+            GraphReader.DataWrite("src\\necessarytxt\\AStarOutput.txt", details);
         }
         if (printDetails) {
             System.out.println(store);
@@ -150,7 +150,6 @@ public class AStarAlg {
                      }
                  }
              });
-            //originally was an arraylist, but the set is faster. Would also freeze up with arraylist.
             ArrayList<Node> explored = new ArrayList<Node>();
             queue.add(begin);
             while((!found) && (!queue.isEmpty())) {
