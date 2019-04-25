@@ -1,8 +1,13 @@
-package current;
+package trees;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 
+import current.Character;
+import current.Graph;
+import current.path_following;
+import current.Graph.Node;
+import enumerations.BehaviorType;
 import processing.core.PShape;
 import processing.core.PVector;
 

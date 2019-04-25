@@ -2,8 +2,8 @@ package old;
 
 import java.util.ArrayList;
 
-import current.AStarAlg;
-import current.AlgorithmSet;
+import algorithms.AStarAlg;
+import algorithms.AlgorithmSet;
 import current.Character;
 import current.Graph;
 import current.path_following;

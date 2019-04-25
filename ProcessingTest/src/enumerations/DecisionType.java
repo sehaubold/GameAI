@@ -1,7 +1,7 @@
 /**
  * 
  */
-package current;
+package enumerations;
 
 /**
  * @author Sam

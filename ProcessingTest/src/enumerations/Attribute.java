@@ -1,4 +1,4 @@
-package current;
+package enumerations;
 
 public enum Attribute {
     ALIVE,

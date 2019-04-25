@@ -8,10 +8,16 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
 
+import algorithms.AStarAlg;
+import algorithms.AlgorithmSet;
 import current.Graph.Node;
+import enumerations.Algorithm;
 import processing.core.PApplet;
 import processing.core.PShape;
 import processing.core.PVector;
+import trees.BehaviorTree;
+import trees.DecisionTree;
+import trees.LearningTree;
 
 /**
  * @author Sam

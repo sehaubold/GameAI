@@ -1,9 +1,13 @@
 /**
  * 
  */
-package current;
+package trees;
 
 import java.util.Random;
+
+import current.Character;
+import enumerations.Algorithm;
+import enumerations.DecisionType;
 
 /**
  * @author Sam

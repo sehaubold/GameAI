@@ -1,10 +1,11 @@
-package current;
+package algorithms;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
+import current.Graph;
 import current.Graph.Edge;
 import current.Graph.Node;
 
