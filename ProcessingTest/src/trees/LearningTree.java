@@ -18,6 +18,7 @@ import enumerations.Attribute;
 import executors.path_following;
 
 /**
+ * Tree that learns using the ID3 method
  * @author Sam
  *
  */
@@ -30,7 +31,8 @@ public class LearningTree {
     
     
     /**
-     * 
+     * creates tree from state file
+     * TODO maybe change constant value into a parameter
      */
     public LearningTree() {
         super();
@@ -43,16 +45,27 @@ public class LearningTree {
         makeTree(examples, attributeset, root);
     }
     /**
-     * 
+     * ignores learned construction so you can store state information
      */
     public LearningTree(String designation) {
         super();
         root = new DecisionNode();
     }
+    /**
+     * traverses tree based on data given
+     * @param live
+     * @param sight
+     * @param path
+     * @return
+     */
     public Algorithm getAction(boolean live, boolean sight, boolean path) {
         DataSet state = new DataSet(live, sight, path, null);
         return root.traverse(state);
     }
+    /**
+     * reads state file and generates datasets to work
+     * @return
+     */
     public ArrayList<DataSet> parseStateFile() {
         ArrayList<DataSet> sets = new ArrayList<DataSet>();
         Scanner fileIn;
@@ -79,6 +92,12 @@ public class LearningTree {
         }
         return sets;
     }
+    /**
+     * state file contains strings that need to be 
+     * parsed as action Enums
+     * @param actionString
+     * @return matching action enum
+     */
     private Algorithm parseAction(String actionString) {
         if (actionString.contains("followpath")) {
             return Algorithm.FINDPATH;
@@ -102,7 +121,7 @@ public class LearningTree {
         throw new IllegalArgumentException("Improper action string: " + actionString);
     }
     /**
-     * 
+     * overwrites/creates file with the out string as contents
      */
     public boolean DataFile(String filename, String out) {
         try {
@@ -116,7 +135,7 @@ public class LearningTree {
         return true;
     }
         /**
-         * 
+         * adds to a data file
          */
         public boolean DataWrite(String filename, String out) {
     //        parseState(out);
@@ -136,6 +155,12 @@ public class LearningTree {
         }
         
         
+    /**
+     * generates learned tree
+     * @param examples
+     * @param attributes
+     * @param decisionNode
+     */
     public void makeTree(ArrayList<DataSet> examples, ArrayList<Attribute> attributes, DecisionNode decisionNode) {
         //calculate init entropy
         double initialEntropy = entropy(examples);
@@ -199,15 +224,20 @@ public class LearningTree {
             }
         }
     }
+    /**
+     * alters homogeneous node
+     * @param examples
+     * @param decisionNode
+     */
     private void attachChild(ArrayList<DataSet> examples, DecisionNode decisionNode) {
-//        DecisionNode child = new DecisionNode();
-//        System.out.println(decisionNode.testAttribute + " " + examples.get(0).action);
-//        child.action = examples.get(0).action;
-//        child.testAttribute = Attribute.ACTION;
-//        decisionNode.children.add(child);
         decisionNode.testAttribute = Attribute.ACTION;
         decisionNode.action = examples.get(0).action;
     }
+    /**
+     * alters node to match probabilistic nature of data
+     * @param decisionNode
+     * @param examples
+     */
     private void attatchActions(DecisionNode decisionNode, ArrayList<DataSet> examples) {
 //        printSet(examples);
         decisionNode.testAttribute = Attribute.SELECT;
