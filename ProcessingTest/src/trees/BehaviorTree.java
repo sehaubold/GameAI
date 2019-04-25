@@ -3,11 +3,11 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 
-import current.Character;
-import current.Graph;
-import current.path_following;
-import current.Graph.Node;
 import enumerations.BehaviorType;
+import executors.path_following;
+import objects.Character;
+import objects.Graph;
+import objects.Graph.Node;
 import processing.core.PShape;
 import processing.core.PVector;
 

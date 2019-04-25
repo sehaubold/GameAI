@@ -5,9 +5,9 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import current.Graph;
-import current.Graph.Edge;
-import current.Graph.Node;
+import objects.Graph;
+import objects.Graph.Edge;
+import objects.Graph.Node;
 
 
 /**
@@ -75,9 +75,9 @@ public class AStarAlg {
 //        long startTime = System.nanoTime();
 //        Graph worker;
 //        if (largGraph) {
-//            worker = GraphReader.GraphRead("src\\current\\graphTwoEdges.txt", "src\\current\\graphTwoNodes.txt");
+//            worker = GraphReader.GraphRead("src\\executors\\graphTwoEdges.txt", "src\\executors\\graphTwoNodes.txt");
 //        } else {
-//            worker = GraphReader.GraphRead("src\\current\\graph1.txt", "src\\current\\NodeNames.txt");
+//            worker = GraphReader.GraphRead("src\\executors\\graph1.txt", "src\\executors\\NodeNames.txt");
 //        }
 //        if (autoSelect) {
 //            Random targetSelect = new Random();
@@ -117,8 +117,8 @@ public class AStarAlg {
 //            details += "Path: " + worker.getTarget().printPath() + "\n";
 //            details += "Predicted: " + worker.getStart().h_val + " Actual: " + worker.getTarget().g_val + "\n";
 //            details += store;
-//            GraphReader.GraphWrite("src\\current\\output.txt", out);
-//            GraphReader.DataWrite("src\\current\\AStarOutput.txt", details);
+//            GraphReader.GraphWrite("src\\executors\\output.txt", out);
+//            GraphReader.DataWrite("src\\executors\\AStarOutput.txt", details);
 //        }
 //        if (printDetails) {
 //            System.out.println(store);

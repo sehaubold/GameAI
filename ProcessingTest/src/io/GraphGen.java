@@ -1,7 +1,8 @@
+package io;
 ///**
 // * 
 // */
-//package old;
+//package necessarytxt;
 //
 //import java.io.File;
 //import java.io.IOException;
@@ -10,8 +11,8 @@
 //import java.util.Random;
 //import java.util.Scanner;
 //
-//import current.Graph.Edge;
-//import current.Graph.Node;
+//import executors.Graph.Edge;
+//import executors.Graph.Node;
 //
 //
 ///**
@@ -31,8 +32,8 @@
 //        int numEdges = Integer.parseInt(in.nextLine().trim());
 //        in.close();
 //        Graph graph = generate(numVert, numEdges);
-//        GraphWrite("src\\current\\graphTwoNodes.txt", stringNodes(graph));
-//        GraphWrite("src\\current\\graphTwoEdges.txt", edgeNodes(graph));
+//        GraphWrite("src\\executors\\graphTwoNodes.txt", stringNodes(graph));
+//        GraphWrite("src\\executors\\graphTwoEdges.txt", edgeNodes(graph));
 //
 //    }
 //    private static Graph generate(int numVert, int numEdges) {

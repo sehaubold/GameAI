@@ -1,8 +1,8 @@
-package current;
+package objects;
 
 import java.util.Stack;
 
-import current.Graph.Node;
+import objects.Graph.Node;
 import processing.core.PVector;
 
 public class Character {

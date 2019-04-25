@@ -2,11 +2,11 @@ package algorithms;
 
 import java.util.ArrayList;
 
-import current.Character;
-import current.Graph;
-import current.Obstacle;
-import current.path_following;
-import current.Graph.Node;
+import executors.path_following;
+import objects.Character;
+import objects.Graph;
+import objects.Obstacle;
+import objects.Graph.Node;
 import processing.core.PApplet;
 import processing.core.PVector;
 

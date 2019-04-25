@@ -1,7 +1,7 @@
 /**
  * 
  */
-package current;
+package executors;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -10,8 +10,11 @@ import java.util.Stack;
 
 import algorithms.AStarAlg;
 import algorithms.AlgorithmSet;
-import current.Graph.Node;
 import enumerations.Algorithm;
+import objects.Character;
+import objects.Graph;
+import objects.Obstacle;
+import objects.Graph.Node;
 import processing.core.PApplet;
 import processing.core.PShape;
 import processing.core.PVector;
@@ -28,7 +31,7 @@ public class path_following  extends PApplet {
     public static final int FRAME_WIDTH = 1000;
     public static final int FRAME_HEIGHT = 1000;
     public static final int STEP = 5;
-    public static final String STATE_FILE = "src\\current\\stateinformation.txt";
+    public static final String STATE_FILE = "necessarytxt\\executors\\stateinformation.txt";
     public static final int TILE_SIZE = 20;
     public static final int HIST_NUM = 50;
     public static final int VOID_STD = 100;
@@ -123,7 +126,7 @@ public class path_following  extends PApplet {
             learntree = false;
         }
         in.close();
-        PApplet.main("current.path_following");
+        PApplet.main("executors.path_following");
 
     }
 

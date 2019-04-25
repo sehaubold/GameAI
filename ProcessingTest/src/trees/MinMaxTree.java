@@ -1,13 +1,13 @@
-package old;
+package trees;
 
 import java.util.ArrayList;
 
 import algorithms.AStarAlg;
 import algorithms.AlgorithmSet;
-import current.Character;
-import current.Graph;
-import current.path_following;
-import current.Graph.Node;
+import executors.path_following;
+import objects.Character;
+import objects.Graph;
+import objects.Graph.Node;
 
 public class MinMaxTree {
     public MinMax root;

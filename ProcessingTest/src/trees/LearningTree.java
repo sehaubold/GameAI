@@ -13,9 +13,9 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import current.path_following;
 import enumerations.Algorithm;
 import enumerations.Attribute;
+import executors.path_following;
 
 /**
  * @author Sam

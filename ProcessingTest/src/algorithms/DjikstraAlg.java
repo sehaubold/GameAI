@@ -1,15 +1,16 @@
+package algorithms;
 ///**
 // * 
 // */
-//package old;
+//package necessarytxt;
 //
 //import java.util.ArrayList;
 //import java.util.Random;
 //import java.util.Scanner;
 //import java.util.Stack;
 //
-//import current.Graph.Edge;
-//import current.Graph.Node;
+//import executors.Graph.Edge;
+//import executors.Graph.Node;
 //
 ///**
 // * @author Sam
@@ -72,9 +73,9 @@
 //        long startTime = System.nanoTime();
 //        Graph worker;
 //        if (largGraph) {
-//            worker = GraphReader.GraphRead("src\\current\\graphTwoEdges.txt", "src\\current\\graphTwoNodes.txt");
+//            worker = GraphReader.GraphRead("src\\executors\\graphTwoEdges.txt", "src\\executors\\graphTwoNodes.txt");
 //        } else {
-//            worker = GraphReader.GraphRead("src\\current\\graph1.txt", "src\\current\\NodeNames.txt");
+//            worker = GraphReader.GraphRead("src\\executors\\graph1.txt", "src\\executors\\NodeNames.txt");
 //        }
 //        if (autoSelect) {
 //            Random targetSelect = new Random();
@@ -119,8 +120,8 @@
 //                details += "Path: " + worker.getTarget().printPath() + "\n";
 //            }
 //            details += store;
-//            GraphReader.GraphWrite("src\\current\\output.txt", out);
-//            GraphReader.DataWrite("src\\current\\DijkstraOutput.txt", details);
+//            GraphReader.GraphWrite("src\\executors\\output.txt", out);
+//            GraphReader.DataWrite("src\\executors\\DijkstraOutput.txt", details);
 //        }
 //        if (printDetails) {
 //            System.out.println(store);
@@ -184,10 +185,10 @@
 //                    System.out.println("Path: " + nodes.get(tarIndex).printPath());
 //                }
 //                Stack<Node> path = new Stack<Node>(); 
-//                Node current = nodes.get(tarIndex);
-//                while (current.pathParent != null) {
-//                    path.push(current);
-//                    current = current.pathParent;
+//                Node executors = nodes.get(tarIndex);
+//                while (executors.pathParent != null) {
+//                    path.push(executors);
+//                    executors = executors.pathParent;
 //                }
 ////                worker.resetParents();
 //                return path;

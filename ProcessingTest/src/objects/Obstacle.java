@@ -1,4 +1,4 @@
-package current;
+package objects;
 
 import processing.core.PApplet;
 import processing.core.PShape;
