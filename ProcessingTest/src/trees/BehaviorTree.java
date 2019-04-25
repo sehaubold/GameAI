@@ -12,12 +12,14 @@ import processing.core.PVector;
 
 
 /**
+ * generates actions and behavior for a character
+ * based on structure of nodes
  * @author Sam
  *
  */
 public class BehaviorTree {
     public String lastAction = "";
-    public Node root;
+    public BehaviorNode root;
     public PVector nextLoc;
     public Stack<PVector> dance;
     public boolean danceDone;
@@ -27,34 +29,40 @@ public class BehaviorTree {
      * 
      */
     public BehaviorTree() {
-        root = new Node(BehaviorType.LEAF, BehaviorType.CONDITION, BehaviorType.BOOLEAN, "isalive", null, 0);
+        root = new BehaviorNode(BehaviorType.LEAF, BehaviorType.CONDITION, BehaviorType.BOOLEAN, "isalive", null, 0);
         nextLoc = new PVector();
     }
     public boolean getBehavior(Character character) {
         return root.executeBehavior(character);
     }
     
+    /**
+     * autocreates desired monster behavior for path_following
+     * @param character is actually the monster
+     * @return behavior tree for use
+     */
     public static BehaviorTree autogenerate(Character character) {
+        //containing tree
         BehaviorTree tree = new BehaviorTree();
         // generate leafs
-        Node isdead = tree.new Node(BehaviorType.LEAF, BehaviorType.CONDITION, BehaviorType.BOOLEAN, "isdead", null, 0);
-        Node followpath = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "followpath", null, 0);
-        Node dance = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "dance", null, 0);
-        Node insight = tree.new Node(BehaviorType.LEAF, BehaviorType.CONDITION, BehaviorType.BOOLEAN, "insight", null, 0);
-        Node chase = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "chase", null, 0);
-        Node wander = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "wander", null, 0);
-        Node search = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "search", null, 0);
-        Node roomChange1 = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "changerooms1", null, 0);
-        Node roomChange2 = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "changerooms2", null, 0);
-        Node roomChange3 = tree.new Node(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "changerooms3", null, 0);
+        BehaviorNode isdead = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.CONDITION, BehaviorType.BOOLEAN, "isdead", null, 0);
+        BehaviorNode followpath = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "followpath", null, 0);
+        BehaviorNode dance = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "dance", null, 0);
+        BehaviorNode insight = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.CONDITION, BehaviorType.BOOLEAN, "insight", null, 0);
+        BehaviorNode chase = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "chase", null, 0);
+        BehaviorNode wander = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "wander", null, 0);
+        BehaviorNode search = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "search", null, 0);
+        BehaviorNode roomChange1 = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "changerooms1", null, 0);
+        BehaviorNode roomChange2 = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "changerooms2", null, 0);
+        BehaviorNode roomChange3 = tree.new BehaviorNode(BehaviorType.LEAF, BehaviorType.ACTION, BehaviorType.ACTION, "changerooms3", null, 0);
         
         // generate composites
-        Node deadCharacterSeq = tree.new Node(BehaviorType.SEQUENCE, "danceSeq");
-        Node chaseSeq = tree.new Node(BehaviorType.SEQUENCE, "chaseSeq");
-        Node randSearch = tree.new Node(BehaviorType.RANDOM_SELECT, "randomSelect");
-        Node randWander = tree.new Node(BehaviorType.RANDOM_SELECT, "randomSelectWander");
-        Node randRoom = tree.new Node(BehaviorType.RANDOM_SELECT, "randomRoom");
-        Node selectorRoot = tree.new Node(BehaviorType.SELECTOR, "selectRoot");
+        BehaviorNode danceSeq = tree.new BehaviorNode(BehaviorType.SEQUENCE, "danceSeq");
+        BehaviorNode chaseSeq = tree.new BehaviorNode(BehaviorType.SEQUENCE, "chaseSeq");
+        BehaviorNode randSearch = tree.new BehaviorNode(BehaviorType.RANDOM_SELECT, "randomSelect");
+        BehaviorNode randWander = tree.new BehaviorNode(BehaviorType.RANDOM_SELECT, "randomSelectWander");
+        BehaviorNode randRoom = tree.new BehaviorNode(BehaviorType.RANDOM_SELECT, "randomRoom");
+        BehaviorNode selectorRoot = tree.new BehaviorNode(BehaviorType.SELECTOR, "selectRoot");
         //random room
         randRoom.children.add(roomChange1);
         randRoom.children.add(roomChange2);
@@ -73,13 +81,13 @@ public class BehaviorTree {
         chaseSeq.children.add(chase);
         
         //dance sequence
-        deadCharacterSeq.children.add(isdead);
-        deadCharacterSeq.children.add(dance);
+        danceSeq.children.add(isdead);
+        danceSeq.children.add(dance);
         
         //root and children assigned
         tree.root = selectorRoot;
         selectorRoot.children.add(followpath);
-        selectorRoot.children.add(deadCharacterSeq);
+        selectorRoot.children.add(danceSeq);
         selectorRoot.children.add(chaseSeq);
         selectorRoot.children.add(randSearch);
         
@@ -87,17 +95,22 @@ public class BehaviorTree {
         
     }
 
-    private class Node {
+    /**
+     * contains behavior types and traversal methods
+     * @author Sam
+     *
+     */
+    private class BehaviorNode {
         public BehaviorType type;
         public BehaviorType actiontype;
         public BehaviorType bool;
         public String field;
-        public ArrayList<Node> children;
+        public ArrayList<BehaviorNode> children;
         public BehaviorType quantifier;
         public double parameter;
         
         /**
-         * bool Node constructor
+         * BOOLEAN BehaviorNode constructor
          * @param type Check composite type. this will typically be a leaf for this constructor
          * @param actiontype Condition, update, or bool
          * @param bool for boolean only. field or parameter based
@@ -105,7 +118,7 @@ public class BehaviorTree {
          * @param quantifier greater, less, or equal sign discrete variables
          * @param parameter param to compare field to
          */
-        public Node(BehaviorType type, BehaviorType actiontype, BehaviorType action, String field,
+        public BehaviorNode(BehaviorType type, BehaviorType actiontype, BehaviorType action, String field,
                 BehaviorType quantifier, double parameter) {
             super();
             this.type = type;
@@ -114,13 +127,13 @@ public class BehaviorTree {
             this.field = field;
             this.quantifier = quantifier;
             this.parameter = parameter;
-            this.children = new ArrayList<Node>();
+            this.children = new ArrayList<BehaviorNode>();
         }
         /**
-         * composite Node constructor
+         * composite BehaviorNode constructor also works for ACTION nodes
          * @param type Check composite type. this will typically be a leaf for this constructor
          */
-        public Node(BehaviorType type, String name) {
+        public BehaviorNode(BehaviorType type, String name) {
             super();
             this.type = type;
             this.actiontype = null;
@@ -128,25 +141,36 @@ public class BehaviorTree {
             this.field = name;
             this.quantifier = null;
             this.parameter = 0;
-            this.children = new ArrayList<Node>();
+            this.children = new ArrayList<BehaviorNode>();
         }
         
+        /**
+         * proceeds through node children based on enumeration for node type
+         * @param character
+         * @return true if children met behavior, false if otherwise
+         */
         public boolean executeBehavior(Character character) {
             if (type == BehaviorType.SELECTOR) {
-                for (Node e : children) {
+                // returns true if a child returns true
+                for (BehaviorNode e : children) {
                     if (e.executeBehavior(character)) {
                         return true;
                     }
                 }
                 return false;
             } else if (type == BehaviorType.SEQUENCE) {
-                for (Node e : children) {
+                // returns true only if all children return true
+                for (BehaviorNode e : children) {
                     if (!e.executeBehavior(character)) {
                         return false;
                     }
                 }
                 return true;
             } else if (type == BehaviorType.RANDOM_SELECT) {
+                // selects a random point in children to start at, then
+                // executes from given child to end of array, then picks
+                // up from zero to reach the rest of the children.
+                // behaves like selector node
                 Random random = new Random();
                 int select = random.nextInt(children.size());
                 for (int i = select; i < children.size(); i++) {
@@ -162,6 +186,10 @@ public class BehaviorTree {
                 return false;
                 
             }  else if (type == BehaviorType.RANDOM_SEQ) {
+                // selects a random point in children to start at, then
+                // executes from given child to end of array, then picks
+                // up from zero to reach the rest of the children.
+                // behaves like sequence node
                 Random random = new Random();
                 int select = random.nextInt(children.size());
                 for (int i = select; i < children.size(); i++) {
@@ -176,13 +204,21 @@ public class BehaviorTree {
                 }
                 return true;
             } else if (type == BehaviorType.DECORATOR) {
+                // meant to perform as a wrapper TODO IMPLEMENT MODIFICATION BEHAVIOR
+                // only has one child at any time
                 return children.get(0).executeBehavior(character);
             } else if (type == BehaviorType.LEAF) {
+                //leave should just execute action, condition check, or update
                 return resolveLeaf(character);
             } else {
-                return false;
+                throw new IllegalArgumentException("Improper Composite Type");
             }
         }
+        /**
+         * decide path based on enumeration
+         * @param character
+         * @return
+         */
         private boolean resolveLeaf(Character character) {
             if (actiontype == BehaviorType.CONDITION) {
                 return conditionCheck(character);
@@ -191,16 +227,10 @@ public class BehaviorTree {
             } else if (actiontype == BehaviorType.ACTION) {
                 return performAction(character);
             }
-            return false;
+            throw new IllegalArgumentException("Improper enumeration for leaf");
         }
 
         private boolean performAction(Character character) {
-//            if (field.equals("charge")) {
-//                return charge(character);
-//            } else if (field.equals("raycast")) {
-////                System.out.println("raycast");
-//                return raycast(character);
-//            }  else 
             recordBeh();
             if (field.equals("followpath")) {
 //                return followPath(character);
@@ -230,6 +260,11 @@ public class BehaviorTree {
             return false;
         }
 
+        /**
+         * updates a state within the character based on the nodes field
+         * @param character
+         * @return boolean based on success
+         */
         private boolean updateState(Character character) {
             if (field.equals("isalive")) {
                 character.alive = true;
@@ -257,13 +292,16 @@ public class BehaviorTree {
             }
             return false;
         }
+        /**
+         * checks a condition based on fields in the character
+         * @param character
+         * @return boolean evauation of a field
+         */
         private boolean conditionCheck(Character character) {
                     if (bool == BehaviorType.BOOLEAN) {
                         if (field.equals("isalive")) {
-                            //TODO alter to be more applicable to the monster
                             return character.alive;
                         } else if (field.equals("isdead")) {
-        //                    System.out.println(!character.alive);
                             return !character.alive;
                         } else if (field.equals("insight")) {
                             return character.inSight;
@@ -285,221 +323,24 @@ public class BehaviorTree {
                     }
                     return false;
                 }
+        /**
+         * store behavior in tree for easy recording external to logical progression
+         * of the PApplet
+         */
         private void recordBeh() {
                     lastAction = field;
                     if (!field.equals("followpath"))
                         emptyPath = true;
                     else
                         emptyPath = false;
-        //            path_following.stateOutput.append("Monster Behavior: ");
-        //            path_following.stateOutput.append(field);
-        //            path_following.stateOutput.append("\n");
-        //            path_following.stateOutput.append("Last Monster Action: ");
-        //            path_following.stateOutput.append(lastAction);
-        //            path_following.stateOutput.append("\n");
                     
                 }
-//        private boolean dance(Character character) {
-//            if (danceDone) {
-//                danceDone = false;
-//                character.alive = true;  
-//                path_following.character.run = true;
-//                character.run = true;
-//                return false;
-//            }
-//            Graph graph = new Graph();
-//            int toAdd = 200;
-//            character.path = new Stack<Graph.Node>();
-//            Graph.Node loc1 = graph.new Node("", 0, 0, character.position.x - toAdd/2, character.position.y - toAdd/2, 0);
-//            Graph.Node loc2 = graph.new Node("", 0, 0, character.position.x + toAdd/2, character.position.y - toAdd/2, 0);
-//            Graph.Node loc3 = graph.new Node("", 0, 0, character.position.x - toAdd/2, character.position.y + toAdd/2, 0);
-//            Graph.Node loc4 = graph.new Node("", 0, 0, character.position.x - toAdd/2, character.position.y + toAdd/2, 0);
-//            Graph.Node loc5 = graph.new Node("", 0, 0, character.position.x + toAdd/2, character.position.y + toAdd/2, 0);
-//            Graph.Node loc6 = graph.new Node("", 0, 0, character.position.x, character.position.y, 0);
-//            character.path.push(loc6);
-//            character.path.push(loc5);
-//            character.path.push(loc4);
-//            character.path.push(loc3);
-//            character.path.push(loc2);
-//            character.target = new PVector((float) loc1.x, (float)  loc1.y);
-//            character.goal = new PVector((float) loc6.x, (float) loc6.y);
-//            danceDone = true;
-//            
-//            
-//            
-//            return true;
-//        }
-//        private boolean reset(Character character) {
-////            monster.position = new PVector(FRAME_WIDTH/2, FRAME_HEIGHT/2);
-//            character.angRot = 0;
-//            character.angle = 0;
-//            character.inSight = false; 
-//            character.goal = new PVector((float) character.graph.nodes.get(character.start).x , (float) character.graph.nodes.get(character.start).y);
-//            Stack<Graph.Node> storage = new Stack<Graph.Node>();
-//            int num = character.path.size();
-//            for (int i = 0; i < num; i++) {
-//                storage.push(character.path.pop());
-//            }
-//            character.path.push(character.graph.nodes.get(character.start));
-//            for (int i = 0; i < num; i++) {
-//                character.path.push(storage.pop());
-//            }
-//            return true;
-//        }
-//        private boolean wander(Character parameter) {
-//            float dist = path_following.TILE_SIZE * 2;
-//            float pointsx[] = new float[] {parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x};
-//            float pointsy[] = new float[] {parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y};
-//            pointsx[0] += dist;
-//            pointsx[1] -= dist;
-//            pointsy[2] += dist;
-//            pointsy[3] -= dist;
-//            pointsx[4] += dist;
-//            pointsy[4] += dist;
-//            pointsx[5] -= dist;
-//            pointsy[5] -= dist;
-//            pointsx[6] += dist;
-//            pointsy[6] -= dist;
-//            pointsx[7] -= dist;
-//            pointsy[7] += dist;
-//            
-//            for (int j = 0; j < pointsx.length; j++) {
-//                if (pointsx[j] <= 0) pointsx[j] = parameter.position.x;
-//                if (pointsx[j] >= path_following.FRAME_WIDTH) pointsx[j] = parameter.position.x;
-//                if (pointsy[j] <= 0) pointsy[j] = parameter.position.y;
-//                if (pointsy[j] >= path_following.FRAME_HEIGHT) pointsy[j] = parameter.position.y;
-//            }
-//            Random selector = new Random();
-//            int selected = selector.nextInt(pointsx.length);
-//            parameter.graph.setTarget(AlgorithmSet.vertexClosest(pointsx[selected], pointsy[selected], path_following.TILE_SIZE, path_following.FRAME_WIDTH, parameter.graph));
-//            parameter.goal = new PVector(pointsx[selected], pointsy[selected]);
-//            parameter.graph.setStart(AlgorithmSet.vertexClosest(parameter.position.x, parameter.position.y, path_following.TILE_SIZE, path_following.FRAME_WIDTH, parameter.graph));
-//            parameter.path = AStarAlg.aStar(parameter.graph);
-//        
-//            return true;
-//        }
-//        private boolean changeRoom(Character character, int num) {
-//                    int thresholdx1 = 0;
-//                    int thresholdx2 = 0;
-//                    int thresholdy1 = 0;
-//                    int thresholdy2 = 0;
-//                    Random random = new Random();
-//                    if (num == 1) {
-//                        thresholdx2 = path_following.FRAME_WIDTH/2;
-//                        thresholdy2 = 750;
-//                    } else if (num == 2) {
-//                        thresholdx1 = path_following.FRAME_WIDTH/2;
-//                        thresholdx2 = path_following.FRAME_WIDTH;
-//                        thresholdy2 = 750;
-//                    } else if (num == 3) {
-//                        thresholdx2 = path_following.FRAME_WIDTH;
-//                        thresholdy1 = 750;
-//                        thresholdy2 = path_following.FRAME_HEIGHT;
-//                    }
-//                    int newX = random.nextInt(thresholdx2 - thresholdx1);
-//                    int newY = random.nextInt(thresholdy2 - thresholdy1);
-//                    newX += thresholdx1;
-//                    newY += thresholdy1;
-//        //            int newX = thresholdx2 - thresholdx1;
-//        //            newX /= 2;
-//        //            newX += thresholdx1;
-//        //            int newY = thresholdy2 - thresholdy1;
-//        //            newY /= 2;
-//        //            newY += thresholdy1;
-//        
-//                    character.graph.setTarget(AlgorithmSet.vertexClosest(newX, newY, path_following.TILE_SIZE, path_following.FRAME_WIDTH, character.graph));
-//                    character.goal = new PVector(newX, newY);
-//                    character.graph.setStart(AlgorithmSet.vertexClosest(character.position.x, character.position.y, path_following.TILE_SIZE, path_following.FRAME_WIDTH, character.graph));
-//                    character.path = AStarAlg.aStar(character.graph);
-//                    return true;
-//                }
-//        @SuppressWarnings("unused")
-//        private boolean raycast(Character character) {
-//            PVector cast = AlgorithmSet.rayCast(character.velocity, (int) (character.velocity.mag() * 3), 
-//                    path_following.FRAME_WIDTH, path_following.FRAME_HEIGHT, path_following.rooms, character);
-//            return cast == null;        
-//        }
-//
-//        private boolean search(Character parameter) {
-////            System.out.println("search");
-//                PVector search = new PVector();
-//                if (searchLocations.isEmpty()) {
-////                    System.out.println("searchisempty");
-//                    float dist = path_following.TILE_SIZE * 2;
-//                    float pointsx[] = new float[] {parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x, parameter.position.x};
-//                    float pointsy[] = new float[] {parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y, parameter.position.y};
-//                    pointsx[0] += dist;
-//                    pointsx[1] -= dist;
-//                    pointsy[2] += dist;
-//                    pointsy[3] -= dist;
-//                    pointsx[4] += dist;
-//                    pointsy[4] += dist;
-//                    pointsx[5] -= dist;
-//                    pointsy[5] -= dist;
-//                    pointsx[6] += dist;
-//                    pointsy[6] -= dist;
-//                    pointsx[7] -= dist;
-//                    pointsy[7] += dist;
-//                    if (step >= pointsx.length) step = 0;
-//                    for (int j = step; j < pointsx.length; j++) {
-//                        if (pointsx[j] < 0) pointsx[j] = parameter.position.x;
-//                        if (pointsx[j] > path_following.FRAME_WIDTH) pointsx[j] = parameter.position.x;
-//                        if (pointsy[j] < 0) pointsy[j] = parameter.position.y;
-//                        if (pointsy[j] > path_following.FRAME_HEIGHT) pointsy[j] = parameter.position.y;
-//                        if (pointsx[j] != parameter.position.x && pointsy[j] != parameter.position.y)
-//                            searchLocations.push(new PVector(pointsx[j], pointsy[j]));
-//                    }
-//                    for (int j = 0; j < step; j++) {
-//                        if (pointsx[j] < 0) pointsx[j] = parameter.position.x;
-//                        if (pointsx[j] > path_following.FRAME_WIDTH) pointsx[j] = parameter.position.x;
-//                        if (pointsy[j] < 0) pointsy[j] = parameter.position.y;
-//                        if (pointsy[j] > path_following.FRAME_HEIGHT) pointsy[j] = parameter.position.y;
-//                        if (pointsx[j] != parameter.position.x && pointsy[j] != parameter.position.y)
-//                            searchLocations.push(new PVector(pointsx[j], pointsy[j]));
-//                    }
-//                }
-//                search = searchLocations.pop();
-//                parameter.graph.setTarget(AlgorithmSet.vertexClosest(search.x, search.y, path_following.TILE_SIZE, path_following.FRAME_WIDTH, parameter.graph));
-//                parameter.goal = new PVector((float) parameter.graph.getTarget().x, (float) parameter.graph.getTarget().y);
-//                parameter.graph.setStart(AlgorithmSet.vertexClosest(parameter.position.x, parameter.position.y, path_following.TILE_SIZE, path_following.FRAME_WIDTH, parameter.graph));
-//                parameter.path = AStarAlg.aStar(parameter.graph);
-////                System.out.println(parameter.path.size());
-//
-//                return true;
-//            }
-//
-//        @SuppressWarnings("unused")
-//        private boolean charge(Character character) {
-////            character.velocity.mult(2);
-//            return false;
-//        }
-//
-//        private boolean followPath(Character character) {
-//            if (!character.path.isEmpty() && character.position.dist(character.target) < path_following.RADIUS_DECEL) {
-//                Graph.Node nextTarget = character.path.pop();
-//                character.target.x = (float) nextTarget.x;
-//                character.target.y = (float) nextTarget.y;
-//            } else if (character.path.isEmpty() && character.position.dist(character.target) <= path_following.RADIUS_SAT) {
-//                return false;
-//            }
-//            AlgorithmSet.arriveSimple(new PVector(), character.target, character, path_following.MAX_ACCELERATION, path_following.MAX_VELOCITY, path_following.RADIUS_DECEL, path_following.RADIUS_SAT, path_following.EFFECT_RANGE);
-//            AlgorithmSet.SteeringAdjust(character,  path_following.RADIUS_SAT_ROT, path_following.RADIUS_DECEL_ROT, path_following.EFFECT_RANGE_ROT, path_following.MAX_ROT);
-//            AlgorithmSet.kinematicAdjust(character);
-//
-//            return true;
-//        }
-//
-//        private boolean chase(Character character) {
-//            searchLocations.removeAllElements();
-//            Character target = path_following.character;
-//            character.goal = new PVector(target.position.x + target.velocity.x, target.position.y + target.velocity.y);
-//            character.graph.setTarget(AlgorithmSet.vertexClosest(character.goal.x, character.goal.y, path_following.TILE_SIZE, path_following.FRAME_WIDTH, character.graph));
-//            character.graph.setStart(AlgorithmSet.vertexClosest(character.position.x, character.position.y, path_following.TILE_SIZE, path_following.FRAME_WIDTH, character.graph));
-//            character.path = AStarAlg.aStar(character.graph);
-//
-//            return true;
-//        }
 
+        /**
+         * returns a < comparison for a given field
+         * @param character to pull fields from
+         * @return boolean based on lesser evaluation
+         */
         private boolean getLess(Character character) {
             if (field.equalsIgnoreCase("orientation")) {
                 return (character.orientation.heading() < parameter);
@@ -518,6 +359,11 @@ public class BehaviorTree {
             }
             return false;
         }
+        /**
+         * returns a == comparison for a given field
+         * @param character to pull fields from
+         * @return boolean based on equality evaluation
+         */
         private boolean getEqual(Character character) {
             if (field.equalsIgnoreCase("orientation")) {
                 return (character.orientation.heading() == parameter);
@@ -536,6 +382,11 @@ public class BehaviorTree {
             }
             return false;
         }
+        /**
+         * returns a > comparison for a given field
+         * @param character to pull fields from
+         * @return boolean based on greater evaluation
+         */
         private boolean getGreater(Character character) {
             if (field.equalsIgnoreCase("orientation")) {
                 return (character.orientation.heading() > parameter);
