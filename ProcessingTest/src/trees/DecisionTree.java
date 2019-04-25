@@ -1,6 +1,3 @@
-/**
- * 
- */
 package trees;
 
 import java.util.Random;
@@ -10,27 +7,35 @@ import enumerations.DecisionType;
 import objects.Character;
 
 /**
+ * decision tree to govern character behavior
  * @author Sam
  *
  */
 public class DecisionTree {
     public DecNode root;
-    public Character character;
 
     /**
-     * 
+     * creates basic root node and inits tree
      */
-    public DecisionTree(Character character) {
+    public DecisionTree() {
         root = new DecNode(DecisionType.BOOLEAN, DecisionType.GREATER, "", 0);
-        this.character = character;
     }
+    /**
+     * traverses tree for action value
+     * @param character
+     * @return
+     */
     public Algorithm getAction(Character character) {
         return root.getAction(character);
     }
     
-    public static DecisionTree autogenerate(Character character) {
+    /**
+     * autogenerates tree for path_following character
+     * @return
+     */
+    public static DecisionTree autogenerate() {
         //generate leafs
-        DecisionTree tree = new DecisionTree(character);
+        DecisionTree tree = new DecisionTree();
         DecNode wander = tree.new DecNode(DecisionType.LEAF, Algorithm.WANDER);
         DecNode change1 = tree.new DecNode(DecisionType.LEAF, Algorithm.CHANGE1);
         DecNode change2 = tree.new DecNode(DecisionType.LEAF, Algorithm.CHANGE2);
@@ -69,6 +74,11 @@ public class DecisionTree {
         
     }
 
+    /**
+     * contains methods that govern traversal
+     * @author Sam
+     *
+     */
     private class DecNode {
         public DecisionType type;
         public DecisionType quantifier;
@@ -77,6 +87,7 @@ public class DecisionTree {
         public DecNode[] children;
         public Algorithm leafAction;
         /**
+         * parent node constructor
          * @param type
          * @param quantifier
          * @param character
@@ -91,17 +102,32 @@ public class DecisionTree {
             this.parameter = parameter;
             this.children = new DecNode[2];
         }
+        /**
+         * action node constructor
+         * @param type
+         * @param action
+         */
         public DecNode(DecisionType type, Algorithm action) {
             super();
             this.type = type;
             this.leafAction = action;
         }
 
+        /**
+         * constructor for a non binary node
+         * @param type
+         * @param num
+         */
         public DecNode(DecisionType type, int num) {
             super();
             this.type = type;
             this.children = new DecNode[num];
         }
+        /**
+         * traverses children to get action value
+         * @param character
+         * @return Algorithm Type
+         */
         public Algorithm getAction(Character character) {
             if (type == DecisionType.BOOLEAN) {
                 boolean bool = checkBool(character);
@@ -132,6 +158,11 @@ public class DecisionTree {
                 return leafAction;
             }
         }
+        /**
+         * returns a < comparison for a given field
+         * @param character to pull fields from
+         * @return boolean based on lesser evaluation
+         */
         private boolean getLess(Character character) {
             if (field.equalsIgnoreCase("orientation")) {
                 return (character.orientation.heading() < parameter);
@@ -150,6 +181,11 @@ public class DecisionTree {
             }
             return false;
         }
+        /**
+         * returns a == comparison for a given field
+         * @param character to pull fields from
+         * @return boolean based on equality evaluation
+         */
         private boolean getEqual(Character character) {
             if (field.equalsIgnoreCase("orientation")) {
                 return (character.orientation.heading() == parameter);
@@ -168,6 +204,11 @@ public class DecisionTree {
             }
             return false;
         }
+        /**
+         * returns a > comparison for a given field
+         * @param character to pull fields from
+         * @return boolean based on greater evaluation
+         */
         private boolean getGreater(Character character) {
             if (field.equalsIgnoreCase("orientation")) {
                 return (character.orientation.heading() > parameter);
@@ -186,6 +227,11 @@ public class DecisionTree {
             }
             return false;
         }
+        /**
+         * returns boolean value based on field
+         * @param character
+         * @return
+         */
         private boolean checkBool(Character character) {
            if (field.equalsIgnoreCase("insight")) {
                return character.inSight;
@@ -196,7 +242,7 @@ public class DecisionTree {
            if (field.equalsIgnoreCase("pathempty")) {
                return character.path.isEmpty();
            }
-           return false;
+           throw new IllegalArgumentException("Improper Boolean check call in Decision Tree");
         }
             
         

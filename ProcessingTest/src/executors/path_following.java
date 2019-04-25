@@ -163,7 +163,7 @@ public class path_following  extends PApplet {
         monster.goal = new PVector(monster.position.x, monster.position.y);
         monster.alive = true;
         rooms = createRooms();
-        characterTree = DecisionTree.autogenerate(character);
+        characterTree = DecisionTree.autogenerate();
         character.graph = gen_graph();
         monster.graph = gen_graph();
 

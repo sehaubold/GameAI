@@ -334,7 +334,7 @@ public class BehaviorTree {
                     else
                         emptyPath = false;
                     
-                }
+        }
 
         /**
          * returns a < comparison for a given field
