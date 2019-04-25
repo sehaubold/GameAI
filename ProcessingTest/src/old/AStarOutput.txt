@@ -1,0 +1,122 @@
+///////////////A* Alg Test Runs: Small Graph, Straight Line\\\\\\\\\\\\\
+
+Distance: 0.5
+Path: BCT GLD
+Predicted: 0.1688687063971613 Actual: 0.5
+Free Memory: 251333152
+Run time: 16880650
+
+Distance: 0.8
+Path: SLN TCK LEE
+Predicted: 0.08693595343713113 Actual: 0.8
+Free Memory: 251333152
+Run time: 17782483
+
+Distance: 2.9000000000000004
+Path: ALX NRT LEE
+Predicted: 0.6151026093270229 Actual: 2.9000000000000004
+Free Memory: 251333152
+Run time: 18898742
+
+Distance: 3.7
+Path: WTG MTC BRY ALX BRG GLD
+Predicted: 0.13838627099457304 Actual: 3.7
+Free Memory: 251333152
+Run time: 16744627
+
+Distance: 1.8
+Path: LEE BCT BRY
+Predicted: 1.2140097034220305 Actual: 1.8
+Free Memory: 251333152
+Run time: 16277848
+
+Distance: 2.5
+Path: TRL TAL LEE BCT BRY
+Predicted: 0.6618764612832686 Actual: 2.5
+Free Memory: 251333152
+Run time: 17341595
+
+/////////A* Alg Test Runs: Small Graph, Manhattan\\\\\\\\\\\\\\\\\\\\
+
+Distance: 1.0
+Path: BCT TAL WTG
+Predicted: 4.193999999998255 Actual: 1.0
+Free Memory: 251333152
+Run time: 17071009
+
+Distance: 0.9
+Path: AFC BGW
+Predicted: 14.251999999999043 Actual: 0.9
+Free Memory: 251333152
+Run time: 17678551
+
+Distance: 2.5
+Path: TRL BWN MTC
+Predicted: 1.2690000000006307 Actual: 2.5
+Free Memory: 251333152
+Run time: 18138403
+
+Distance: 3.4
+Path: LEE BCT GLD CRL
+Predicted: 6.069000000003655 Actual: 3.4
+Free Memory: 251333152
+Run time: 17309139
+
+/////////A* Alg Test Runs: large Graph, Straight Line\\\\\\\\\\\\\\\\\\\\
+
+Distance: 3513.750784830428
+Path: 151 060 741 485 177 782 148 833 560 721 924 388
+Predicted: 30.591081212092185 Actual: 3513.750784830428
+Free Memory: 279906920
+Run time: 389427002
+
+Distance: 4140.951945292344
+Path: 340 668 113 400 462 500 634 473 078 108
+Predicted: 66.93441942954425 Actual: 4140.951945292344
+Free Memory: 278116856
+Run time: 437453527
+
+Distance: 4202.072118126515
+Path: 826 422 112 208 830 611 025 808 636 811 265 030 914
+Predicted: 32.74698587287733 Actual: 4202.072118126515
+Free Memory: 274599976
+Run time: 438490289
+
+Distance: 4784.81690898062
+Path: 834 479 512 163 293 210 055 632 006 945 625 426 995
+Predicted: 50.27085322242877 Actual: 4784.81690898062
+Free Memory: 274627792
+Run time: 438755040
+
+/////////A* Alg Test Runs: large Graph, Manhattan\\\\\\\\\\\\\\\\\\\\
+
+Distance: 3096.2230511501302
+Path: 843 813 732 661 565 235 120 257 118
+Predicted: 1026.0330899847502 Actual: 3096.2230511501302
+Free Memory: 280761864
+Run time: 379603113
+
+Distance: 4276.705842467208
+Path: 778 655 716 096 468 913 803 903 262 957 560 721 924 917 083 128 675
+Predicted: 272.5515578526393 Actual: 4276.705842467208
+Free Memory: 279906896
+Run time: 393393901
+
+Distance: 3642.076465569581
+Path: 365 591 256 322 178 354 581 021 629 285 827 606
+Predicted: 881.409122241043 Actual: 3642.076465569581
+Free Memory: 279911872
+Run time: 435685599
+
+Distance: 3809.545840570797
+Path: 321 788 926 480 339 304 636 811 265 121 023 963 517
+Predicted: 777.8655817812354 Actual: 3809.545840570797
+Free Memory: 279923304
+Run time: 424051480
+
+Distance: 5284.498369208213
+Path: 860 377 313 671 583 958 480 339 427
+Predicted: 85.29610526064468 Actual: 5284.498369208213
+Free Memory: 274599136
+Run time: 433220055
+

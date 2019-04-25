@@ -1,0 +1,32 @@
+0 0 0 0 1 0 0 0 0 0 1
+------------------------Character------------------------
+Wander Used: 0
+Change1 Used: 0
+Change2 Used: 0
+Change3 Used: 0
+Run Used: 0
+Hide Used: 0
+Wandered To Death: 0
+Room Changes Leading to Death: R1-- 0 R2-- 0 R3-- 0
+Chases Lost: 1
+Failed Stealth: 0
+------------------------Monster------------------------
+Wander Used: 0
+Change1 Used: 0
+Change2 Used: 0
+Change3 Used: 0
+Chase Used: 0
+Search Used: 0
+CR Kills: 0
+Wander Kills: 0
+Search Kills: 0
+Chase Kills: 1
+------------------------Interactions------------------------
+Character Room 1: 0      Monster Room 1: 0
+Character Room 2: 0      Monster Room 2: 0
+Character Room 3: 0      Monster Room 3: 0
+CharacterSameRoom: R1-- 0      R2-- 0      R3-- 0
+Character Seen R1: 1      Character Seen R2: 0      Character Seen R3: 0
+Character Location Unknown: 0
+Room Checks: 0
+

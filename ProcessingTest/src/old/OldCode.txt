@@ -1,0 +1,371 @@
+code storage:
+//how likely character is to be in a given room
+    public double room[] = {1.0/3.0, 1.0/3.0, 1.0/3.0};
+    public int valueArray[];
+    //probablility of wander vs search
+    public double outsightwanderProb = 0.33;
+    public double outsightsearchProb = 0.33;
+    public double outsightroomSwapProb = 0.34;
+    //probability for what to do in a sighted sequence
+    public double insightCR = 0.1;
+    public double insightChase = 0.7;
+    public double insightwander = 0.1;
+    public double insightsearch = 0.1;
+    //information to parse and learn from
+    public String stateBehavior;
+    
+    //BEGIN CHARACTER ACCUMULATORS
+    public int wanderinstanceC = 0;
+    public int swap1instanceC = 0;
+    public int swap2instanceC = 0;
+    public int swap3instanceC = 0;
+    public int runinstanceC = 0;
+    public int hideinstanceC = 0;
+    public int wanderFAILC = 0;
+    public int swap1FAILC = 0;
+    public int swap2FAILC = 0;
+    public int swap3FAILC = 0;
+    public int runFAILC = 0;
+    public int hideFAILC = 0;
+    public int locationC[] = {0, 0, 0}; 
+    //BEGIN MONSTER ACCUMULATORS
+    public int wanderinstanceM = 0;
+    public int searchinstanceM = 0;
+    public int swap1instanceM = 0;
+    public int swap2instanceM = 0;
+    public int swap3instanceM = 0;
+    public int chaseinstanceM = 0;
+    public int swap1kill = 0;
+    public int swap2kill = 0;
+    public int swap3kill = 0;
+    public int wanderkill = 0;
+    public int searchkill = 0;
+    public int chasekill = 0;
+    public int locationM[] = {0, 0, 0};
+    public int foundRoomCM[] = {0, 0, 0, 0};
+    public int sameRoomCM[] = {0, 0, 0, 0};
+    //BEGIN GENERIC ACCUMULATORS
+    public int roomChecks = 0;
+    private boolean danceDone;
+    private Stack<PVector> searchLocations;
+    /**
+     * 
+     */
+    public DecisionTreeLearn() {
+        super();
+        createTree();
+        this.room =  new double[]{1.0/3.0, 1.0/3.0, 1.0/3.0};
+        this.outsightwanderProb = 0.5;
+        this.outsightsearchProb = 0.5;
+        this.outsightroomSwapProb = 0.5;
+        this.stateBehavior = "";
+        Scanner fileIn;
+        this.valueArray = new int[11];
+        try {
+            fileIn = new Scanner(new File(TREE_FILE));
+            String line = fileIn.nextLine();
+            StringTokenizer linescan = new StringTokenizer(line, " ");
+            valueArray[0] = Integer.parseInt(linescan.nextToken());
+            valueArray[1] = Integer.parseInt(linescan.nextToken());
+            valueArray[2] = Integer.parseInt(linescan.nextToken());
+            valueArray[3] = Integer.parseInt(linescan.nextToken());
+            valueArray[4] = Integer.parseInt(linescan.nextToken());
+            valueArray[5] = Integer.parseInt(linescan.nextToken());
+            valueArray[6] = Integer.parseInt(linescan.nextToken());
+            valueArray[7] = Integer.parseInt(linescan.nextToken());
+            valueArray[8] = Integer.parseInt(linescan.nextToken());
+            valueArray[9] = Integer.parseInt(linescan.nextToken());
+            valueArray[10] = Integer.parseInt(linescan.nextToken());
+            fileIn.close();
+            
+            createProbabilities(valueArray[0], valueArray[1], valueArray[2], valueArray[3], valueArray[4], valueArray[5], valueArray[6], valueArray[7], valueArray[8], valueArray[9], valueArray[10] );
+             
+            this.searchLocations = new Stack<PVector>();
+        } catch (IOException e) {
+            System.out.println("Names could not be read");
+            e.printStackTrace();
+        }
+    }
+    private void createTree() {
+        
+        
+    }
+    private void createProbabilities(int roomNum, int sameRoom1, int sameRoom2, int sameRoom3, int sightRoom1,
+            int sightRoom2, int sightRoom3, int wan, int search, int room2, int chase) {
+        int sameRoomTotal = sameRoom1 + sameRoom2 + sameRoom3;
+        int differentRoom = roomNum - sameRoomTotal;
+        int totalSightings = sightRoom1 + sightRoom2 + sightRoom3;
+        int totalKills = wan + search + room2 + chase;
+        double insistanceTotal = ((double) sameRoomTotal) / ((double) roomNum);
+        insistanceTotal += ((double) differentRoom) / ((double) roomNum);
+        insistanceTotal += wan/totalKills;
+        this.outsightsearchProb = (((double) sameRoomTotal) / ((double) roomNum)) / insistanceTotal;
+        this.outsightroomSwapProb = (((double) differentRoom) / ((double) roomNum)) / insistanceTotal;
+        this.outsightwanderProb = (wan/totalKills) / insistanceTotal;
+        insistanceTotal = ((double) room2) / ((double) totalKills);
+        insistanceTotal += ((double) wan) / ((double) totalKills);
+        insistanceTotal += ((double) search) / ((double) totalKills);
+        insistanceTotal += (2 * (double) chase) / ((double) totalKills);
+        this.insightChase = (2 * ((double) chase) / ((double) totalKills)) / insistanceTotal;
+        this.insightCR = (((double) room2) / ((double) totalKills)) / insistanceTotal;
+        this.insightsearch = (((double) search) / ((double) totalKills)) / insistanceTotal;
+        this.insightwander = (((double) wan) / ((double) totalKills)) / insistanceTotal;
+
+        this.room[0] = ((double) sightRoom1) / ((double) totalSightings);
+        this.room[1] = ((double) sightRoom2) / ((double) totalSightings);
+        this.room[2] = ((double) sightRoom3) / ((double) totalSightings); 
+        
+    }
+    public boolean getBehavior(Character character) {
+        return false;
+    }
+    
+    private void updateBehavior() {
+        int roomNum = valueArray[0] + roomChecks;
+        int sameRoom1 = valueArray[1] + sameRoomCM[0];
+        int sameRoom2 = valueArray[2] + sameRoomCM[1];
+        int sameRoom3 = valueArray[3] + sameRoomCM[2];
+        int sightRoom1 = valueArray[4] + foundRoomCM[0];
+        int sightRoom2 = valueArray[5] + foundRoomCM[1];
+        int sightRoom3 = valueArray[6] + foundRoomCM[2];
+        int wan = valueArray[7] + wanderkill;
+        int search = valueArray[8] + searchkill;
+        int room2 = valueArray[9] + swap1kill + swap3kill + swap3kill;
+        int chase = valueArray[10] + runFAILC;
+        createProbabilities(roomNum, sameRoom1, sameRoom2, sameRoom3, sightRoom1, sightRoom2, sightRoom3, wan, search, room2, chase);
+        
+    }
+    private void parseState(String out) {
+        StringTokenizer parser = new StringTokenizer(out);
+        ArrayList<String> lines = new ArrayList<String>();
+        while (parser.hasMoreTokens()) {
+            lines.add(parser.nextToken("\n"));
+        }
+//        for (String line : lines) {
+//            System.out.println(line + lines.size());
+//        }
+        //parse line 1, the character behavior
+        if (lines.get(0).contains("WANDER")) {
+            wanderinstanceC++;
+        } else if (lines.get(0).contains("CHANGE")) {
+            if (lines.get(0).contains("CHANGE1")) {
+                swap1instanceC++;
+            } else if (lines.get(0).contains("CHANGE2")) {
+                swap2instanceC++;
+            } else if (lines.get(0).contains("CHANGE3")) {
+                swap3instanceC++;
+            }
+        } else if (lines.get(0).contains("RUN")) {
+            runinstanceC++;
+        } else if (lines.get(0).contains("HIDE")) {
+            hideinstanceC++;
+        }
+
+        //parse line 2, the character success
+        if (lines.get(1).contains("False")) {
+            if (lines.get(1).contains("WANDER")) {
+                wanderFAILC++;
+            } else if (lines.get(1).contains("CHANGE")) {
+                if (lines.get(1).contains("CHANGE1")) {
+                    swap1FAILC++;
+                } else if (lines.get(1).contains("CHANGE2")) {
+                    swap2FAILC++;
+                } else if (lines.get(1).contains("CHANGE3")) {
+                    swap3FAILC++;
+                }
+            } else if (lines.get(1).contains("RUN")) {
+                runFAILC++;
+            } else if (lines.get(1).contains("HIDE")) {
+                hideFAILC++;
+            }
+            //record the monster's behavior for kill
+            if (lines.get(3).contains("wander")) {
+                wanderkill++;
+            } else if (lines.get(3).contains("search")) {
+                searchkill++;
+            } else if (lines.get(3).contains("chase")) {
+                chasekill++;
+            } else if (lines.get(3).contains("change")) {
+                if (lines.get(3).contains("1")) {
+                    swap1kill++;
+                } else if (lines.get(3).contains("2")) {
+                    swap2kill++;
+                } else if (lines.get(3).contains("3")) {
+                    swap3kill++;
+                }
+            }
+        }
+         // parse line 3 the monster behavior
+        if (lines.get(2).contains("wander")) {
+            wanderinstanceM++;
+        } else if (lines.get(2).contains("search")) {
+            searchinstanceM++;
+        } else if (lines.get(2).contains("chase")) {
+            chaseinstanceM++;
+        } else if (lines.get(2).contains("change")) {
+            if (lines.get(2).contains("1")) {
+                swap1instanceM++;
+            } else if (lines.get(2).contains("2")) {
+                swap2instanceM++;
+            } else if (lines.get(2).contains("3")) {
+                swap3instanceM++;
+            }
+        }
+        
+        //parse line 5, the character room
+        if (lines.get(4).contains("1")) {
+            locationC[0]++;
+        } else if (lines.get(4).contains("2")) {
+            locationC[1]++;
+        } else if (lines.get(4).contains("3")) {
+            locationC[2]++;
+        }
+        //parse line 6, the monster room
+        int room = 3; //will be used later
+        if (lines.get(5).contains("1")) {
+            room = 0;
+            locationM[0]++;
+        } else if (lines.get(5).contains("2")) {
+            room = 1;
+            locationM[1]++;
+        } else if (lines.get(5).contains("3")) {
+            room = 2;
+            locationM[2]++;
+        }
+        roomChecks++;
+        //parse line 7, character and monster in same room
+        if (lines.get(6).contains("true")) {
+            sameRoomCM[room]++;
+        }
+        //parse line 8, character sighted
+        if (lines.get(7).contains("1")) {
+            foundRoomCM[0]++;
+        } else if (lines.get(7).contains("2")) {
+            foundRoomCM[1]++;
+        } else if (lines.get(7).contains("3")) {
+            foundRoomCM[2]++;
+        } else {
+            foundRoomCM[3]++;
+        }
+        
+    }
+    
+    
+    private String printInteractions() {
+        StringBuilder ret = new StringBuilder("");
+        ret.append("------------------------Interactions------------------------");
+        ret.append("\n");
+        ret.append("Character Room 1: " + locationC[0] + "      Monster Room 1: " + locationM[0]);
+        ret.append("\n");
+        ret.append("Character Room 2: " + locationC[1] + "      Monster Room 2: " + locationM[1]);
+        ret.append("\n");
+        ret.append("Character Room 3: " + locationC[2] + "      Monster Room 3: " + locationM[2]);
+        ret.append("\n");  
+        ret.append("CharacterSameRoom: R1-- " + sameRoomCM[0] + "      R2-- " + sameRoomCM[1] + "      R3-- " + sameRoomCM[2]);
+        ret.append("\n"); 
+        ret.append("Character Seen R1: " + foundRoomCM[0] + "      Character Seen R2: " + foundRoomCM[1] + "      Character Seen R3: " + foundRoomCM[2]);
+        ret.append("\n");
+        ret.append("Character Location Unknown: " + foundRoomCM[3]);
+        ret.append("\n");  
+        ret.append("Room Checks: " + roomChecks);
+        ret.append("\n"); 
+        return ret.toString();
+    }
+    
+    public boolean printDecisionFile() {
+        StringBuilder combo = new StringBuilder(printParameters());
+        combo.append(printCInstances());
+        combo.append(printMInstances());
+        combo.append(printInteractions());
+        DataFile(TREE_FILE, combo.toString());
+        System.out.println(printCInstances());
+        System.out.println(printMInstances());
+        System.out.println(printInteractions());
+        return true;
+    }
+    private String printParameters() {
+        StringBuilder ret = new StringBuilder("");
+        ret.append(roomChecks);
+        ret.append(" ");
+        ret.append(sameRoomCM[0]);
+        ret.append(" ");
+        ret.append(sameRoomCM[1]);
+        ret.append(" ");
+        ret.append(sameRoomCM[2]);
+        ret.append(" ");
+        ret.append(foundRoomCM[0]);
+        ret.append(" ");
+        ret.append(foundRoomCM[1]);
+        ret.append(" ");
+        ret.append(foundRoomCM[2]);
+        ret.append(" ");
+        ret.append(wanderkill);
+        ret.append(" ");
+        ret.append(searchkill);
+        ret.append(" ");
+        ret.append((swap1kill + swap2kill + swap3kill));
+        ret.append(" ");
+        ret.append(runFAILC);
+        ret.append("\n");
+        return ret.toString();
+    }
+    /**
+     * prints the monster algorithm instance counts
+     */
+    private String printMInstances() {
+        StringBuilder ret = new StringBuilder("");
+        ret.append("------------------------Monster------------------------");
+        ret.append("\n");
+        ret.append("Wander Used: " + wanderinstanceM);
+        ret.append("\n");
+        ret.append("Change1 Used: " + swap1instanceM);
+        ret.append("\n");
+        ret.append("Change2 Used: " + swap2instanceM);
+        ret.append("\n");
+        ret.append("Change3 Used: " + swap3instanceM);
+        ret.append("\n");
+        ret.append("Chase Used: " + chaseinstanceM);
+        ret.append("\n");
+        ret.append("Search Used: " + searchinstanceM);  
+        ret.append("\n");  
+        ret.append("CR Kills: " + (swap1kill + swap2kill + swap3kill));
+        ret.append("\n");  
+        ret.append("Wander Kills: " + wanderkill);
+        ret.append("\n");  
+        ret.append("Search Kills: " + searchkill);
+        ret.append("\n");  
+        ret.append("Chase Kills: " + runFAILC);
+        ret.append("\n"); 
+        return ret.toString();
+        
+    }
+    /**
+     * prints the character algorithm instance counts
+     */
+    private String printCInstances() {
+        StringBuilder ret = new StringBuilder("");
+        ret.append("------------------------Character------------------------");
+        ret.append("\n");
+        ret.append("Wander Used: " + wanderinstanceC);
+        ret.append("\n");
+        ret.append("Change1 Used: " + swap1instanceC);
+        ret.append("\n");
+        ret.append("Change2 Used: " + swap2instanceC);
+        ret.append("\n");
+        ret.append("Change3 Used: " + swap3instanceC);
+        ret.append("\n");
+        ret.append("Run Used: " + runinstanceC);
+        ret.append("\n");
+        ret.append("Hide Used: " + hideinstanceC);
+        ret.append("\n");
+
+        ret.append("Wandered To Death: " + wanderFAILC);
+        ret.append("\n");
+        ret.append("Room Changes Leading to Death: R1-- " + swap1FAILC + " R2-- "  + swap2FAILC + " R3-- " + swap3FAILC);
+        ret.append("\n");
+        ret.append("Chases Lost: " + runFAILC);
+        ret.append("\n");
+        ret.append("Failed Stealth: " + hideFAILC);
+        ret.append("\n");  
+        return ret.toString();
+    }
