@@ -17,7 +17,7 @@ public class basic_movement extends PApplet{
     private ArrayList<PShape> crumbs;
     
     public static void main(String[] args) {
-        PApplet.main("basic_movement");
+        PApplet.main("executors.basic_movement");
     }
 
     public void settings(){

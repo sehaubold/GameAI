@@ -53,7 +53,7 @@ public class flocking_behavior extends PApplet {
             algType = 2;
         }
         in.close();
-        PApplet.main("flocking_behavior");
+        PApplet.main("executors.flocking_behavior");
     }
 
     public void settings(){

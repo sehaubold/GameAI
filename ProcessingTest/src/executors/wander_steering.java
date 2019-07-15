@@ -49,7 +49,7 @@ public class wander_steering extends PApplet{
             crum  = true;
         } 
         in.close();
-        PApplet.main("wander_steering");
+        PApplet.main("executors.wander_steering");
     }
 
     public void settings(){
